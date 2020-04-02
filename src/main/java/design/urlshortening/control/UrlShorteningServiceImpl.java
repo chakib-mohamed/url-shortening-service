@@ -1,17 +1,14 @@
 package design.urlshortening.control;
 
 import design.urlshortening.boundary.CreateShortURLCommand;
-import design.urlshortening.control.exception.BusinessException;
 import design.urlshortening.control.exception.URLNotFoundException;
+import design.urlshortening.control.policies.Policy;
 import design.urlshortening.entity.Url;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -21,46 +18,33 @@ import java.util.Optional;
 public class UrlShorteningServiceImpl implements UrlShorteningService {
 
     final UrlRepository urlRepository;
+    final Policy<String> uniqueAliasPolicy;
+    final Policy<String> uniqueURLPolicy;
 
-    public UrlShorteningServiceImpl(UrlRepository urlRepository) {
+    public UrlShorteningServiceImpl(UrlRepository urlRepository,
+                                    @Qualifier("UniqueAliasPolicy") Policy<String> uniqueAliasPolicy,
+                                    @Qualifier("UniqURLPolicy") Policy<String> uniqueURLPolicy) {
         this.urlRepository = urlRepository;
-    }
-
-    // Business Rules
-    List<Policy> policies = new ArrayList<>();
-
-    @PostConstruct
-    private void initBusinessRules() {
-//        policies.add(
-//                Policy.builder().rule(command -> command.getOriginalURL().startsWith("https://example/"))
-//                                .message("URL must start with example").build()
-//        );
-        policies.add(
-                Policy.builder().rule(command -> StringUtils.isEmpty(command.getCustomAlia()) || urlRepository.findById(command.getCustomAlia()).isEmpty())
-                        .message("Alias is already used").build()
-        );
+        this.uniqueAliasPolicy = uniqueAliasPolicy;
+        this.uniqueURLPolicy = uniqueURLPolicy;
     }
 
 
     @Override
-    public Url getOriginalURL(String hash) throws BusinessException {
+    public Url getOriginalURL(String hash) {
 
         return urlRepository.findById(hash).orElseThrow(() -> new URLNotFoundException("URL not found"));
     }
 
     @Override
-    public Url registerURL(CreateShortURLCommand createShortURLCommand) throws BusinessException {
-        for (Policy policy : policies) {
-            if (!policy.getRule().test(createShortURLCommand)) {
-                throw new BusinessException(policy.getMessage());
-            }
-        }
+    public Url registerURL(CreateShortURLCommand createShortURLCommand) {
 
+        this.uniqueAliasPolicy.validate(createShortURLCommand.getCustomAlia());
         var hash = Optional.ofNullable(createShortURLCommand.getCustomAlia()).orElse(shortenURL(createShortURLCommand.getOriginalURL()));
+        this.uniqueURLPolicy.validate(hash);
+
         var url = this.createUrlEntity(createShortURLCommand, hash);
         return urlRepository.save(url);
-
-
     }
 
     private String shortenURL(String originalURL) {

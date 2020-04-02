@@ -1,6 +1,5 @@
 package design.urlshortening.boundary;
 
-import design.urlshortening.control.exception.BusinessException;
 import design.urlshortening.control.UrlShorteningService;
 import design.urlshortening.entity.Url;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,7 @@ public class UrlShorteningController {
 
     @PostMapping("/short-url")
     public ResponseEntity<Url> createURL(@RequestBody CreateShortURLCommand createShortURLCommand,
-                                         UriComponentsBuilder uriComponentsBuilder) throws BusinessException {
+                                         UriComponentsBuilder uriComponentsBuilder) {
 
         var url = urlShorteningService.registerURL(createShortURLCommand);
 
@@ -30,14 +29,14 @@ public class UrlShorteningController {
     }
 
     @GetMapping("/short-url/{hash}")
-    public Url getShortURL(@PathVariable String hash) throws BusinessException {
+    public Url getShortURL(@PathVariable String hash) {
 
         return urlShorteningService.getOriginalURL(hash);
 
     }
 
     @GetMapping("/{hash}")
-    public void redirectToOriginalURL(@PathVariable String hash, HttpServletResponse response) throws BusinessException, IOException {
+    public void redirectToOriginalURL(@PathVariable String hash, HttpServletResponse response) throws IOException {
         response.sendRedirect(urlShorteningService.getOriginalURL(hash).getOriginalURL());
     }
 }
