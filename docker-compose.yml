@@ -1,6 +1,13 @@
 version: "3.7"
 
 services:
+  url-shortening-service:
+    build: .
+    ports:
+    - 8080:8080
+    depends_on:
+      - redis
+
   redis:
     image: redis
     volumes:
