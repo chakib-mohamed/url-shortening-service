@@ -1,4 +1,4 @@
-package design.urlshortening.control;
+package lechak.design.urlshortening.control;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -13,8 +13,7 @@ public class HashUtils {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-        final byte[] hashbytes = digest.digest(
-                url.getBytes(StandardCharsets.UTF_8));
+        final byte[] hashbytes = digest.digest(url.getBytes(StandardCharsets.UTF_8));
         return bytesToHex(hashbytes);
     }
 
@@ -22,7 +21,8 @@ public class HashUtils {
         StringBuilder hexString = new StringBuilder();
         for (byte b : hash) {
             String hex = Integer.toHexString(0xff & b);
-            if (hex.length() == 1) hexString.append('0');
+            if (hex.length() == 1)
+                hexString.append('0');
             hexString.append(hex);
         }
         return hexString.toString();

@@ -1,15 +1,14 @@
-package design.urlshortening.control;
-
-import design.urlshortening.boundary.CreateShortURLCommand;
-import design.urlshortening.control.exception.URLNotFoundException;
-import design.urlshortening.control.policies.Policy;
-import design.urlshortening.entity.Url;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
+package lechak.design.urlshortening.control;
 
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import lechak.design.urlshortening.boundary.CreateShortURLCommand;
+import lechak.design.urlshortening.control.exception.URLNotFoundException;
+import lechak.design.urlshortening.control.policies.Policy;
+import lechak.design.urlshortening.entity.Url;
 
 /**
  * @author chakib mohamed
@@ -22,8 +21,8 @@ public class UrlShorteningServiceImpl implements UrlShorteningService {
     final Policy<String> uniqueURLPolicy;
 
     public UrlShorteningServiceImpl(UrlRepository urlRepository,
-                                    @Qualifier("UniqueAliasPolicy") Policy<String> uniqueAliasPolicy,
-                                    @Qualifier("UniqURLPolicy") Policy<String> uniqueURLPolicy) {
+            @Qualifier("UniqueAliasPolicy") Policy<String> uniqueAliasPolicy,
+            @Qualifier("UniqURLPolicy") Policy<String> uniqueURLPolicy) {
         this.urlRepository = urlRepository;
         this.uniqueAliasPolicy = uniqueAliasPolicy;
         this.uniqueURLPolicy = uniqueURLPolicy;
@@ -33,14 +32,16 @@ public class UrlShorteningServiceImpl implements UrlShorteningService {
     @Override
     public Url getOriginalURL(String hash) {
 
-        return urlRepository.findById(hash).orElseThrow(() -> new URLNotFoundException("URL not found"));
+        return urlRepository.findById(hash)
+                .orElseThrow(() -> new URLNotFoundException("URL not found"));
     }
 
     @Override
     public Url registerURL(CreateShortURLCommand createShortURLCommand) {
 
         this.uniqueAliasPolicy.validate(createShortURLCommand.getCustomAlia());
-        var hash = Optional.ofNullable(createShortURLCommand.getCustomAlia()).orElse(shortenURL(createShortURLCommand.getOriginalURL()));
+        var hash = Optional.ofNullable(createShortURLCommand.getCustomAlia())
+                .orElse(shortenURL(createShortURLCommand.getOriginalURL()));
         this.uniqueURLPolicy.validate(hash);
 
         var url = this.createUrlEntity(createShortURLCommand, hash);
@@ -56,10 +57,10 @@ public class UrlShorteningServiceImpl implements UrlShorteningService {
     }
 
     private Url createUrlEntity(CreateShortURLCommand createShortURLCommand, String hash) {
-        return Url.builder().hash(hash)
-                .originalURL(createShortURLCommand.getOriginalURL())
+        return Url.builder().hash(hash).originalURL(createShortURLCommand.getOriginalURL())
                 .creationDate(LocalDateTime.now())
-                .expirationDate(Optional.ofNullable(createShortURLCommand.getExpireDate()).orElse(LocalDateTime.now().plusMonths(1)))
+                .expirationDate(Optional.ofNullable(createShortURLCommand.getExpireDate())
+                        .orElse(LocalDateTime.now().plusMonths(1)))
                 .build();
     }
 

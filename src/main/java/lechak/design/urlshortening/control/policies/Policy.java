@@ -1,4 +1,4 @@
-package design.urlshortening.control.policies;
+package lechak.design.urlshortening.control.policies;
 
 public interface Policy<T> {
 

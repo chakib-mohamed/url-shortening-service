@@ -1,4 +1,4 @@
-package design.urlshortening.control.exception;
+package lechak.design.urlshortening.control.exception;
 
 public class URLAlreadyRegistredException extends BusinessException {
 

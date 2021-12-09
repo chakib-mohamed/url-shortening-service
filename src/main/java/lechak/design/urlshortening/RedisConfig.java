@@ -1,4 +1,4 @@
-package design.urlshortening;
+package lechak.design.urlshortening;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +19,8 @@ public class RedisConfig {
     @Bean
     JedisConnectionFactory jedisConnectionFactory() {
 
-        RedisStandaloneConfiguration standaloneConfig = new RedisStandaloneConfiguration(redisServerHost, redisServerPort);
+        RedisStandaloneConfiguration standaloneConfig =
+                new RedisStandaloneConfiguration(redisServerHost, redisServerPort);
         return new JedisConnectionFactory(standaloneConfig);
     }
 

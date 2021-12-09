@@ -1,10 +1,10 @@
-package design.urlshortening.control.policies;
+package lechak.design.urlshortening.control.policies;
 
-import design.urlshortening.control.UrlRepository;
-import design.urlshortening.control.exception.AliasAlreadyUsedException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import lechak.design.urlshortening.control.UrlRepository;
+import lechak.design.urlshortening.control.exception.AliasAlreadyUsedException;
 
 @Service
 @Qualifier("UniqueAliasPolicy")
@@ -18,8 +18,8 @@ public class UniqueAliasPolicy implements Policy<String> {
 
     @Override
     public void validate(String alias) {
-       if(!StringUtils.isEmpty(alias) && urlRepository.findById(alias).isPresent()){
-           throw new AliasAlreadyUsedException("Alias already used");
-       }
+        if (!StringUtils.isEmpty(alias) && urlRepository.findById(alias).isPresent()) {
+            throw new AliasAlreadyUsedException("Alias already used");
+        }
     }
 }

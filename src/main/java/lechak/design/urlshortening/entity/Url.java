@@ -1,11 +1,10 @@
-package design.urlshortening.entity;
-
-import lombok.Builder;
-import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.redis.core.RedisHash;
+package lechak.design.urlshortening.entity;
 
 import java.time.LocalDateTime;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
+import lombok.Builder;
+import lombok.Data;
 
 @Data
 @Builder

@@ -1,4 +1,4 @@
-package design.urlshortening;
+package lechak.design.urlshortening;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 class UrlShorteningApplicationTests {
 
     @Test
-    void contextLoads() {
-    }
+    void contextLoads() {}
 
 }

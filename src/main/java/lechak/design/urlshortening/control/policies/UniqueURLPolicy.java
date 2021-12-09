@@ -1,10 +1,10 @@
-package design.urlshortening.control.policies;
+package lechak.design.urlshortening.control.policies;
 
-import design.urlshortening.control.UrlRepository;
-import design.urlshortening.control.exception.URLAlreadyRegistredException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import lechak.design.urlshortening.control.UrlRepository;
+import lechak.design.urlshortening.control.exception.URLAlreadyRegistredException;
 
 @Service
 @Qualifier("UniqURLPolicy")
@@ -18,8 +18,8 @@ public class UniqueURLPolicy implements Policy<String> {
 
     @Override
     public void validate(String hash) {
-       if(!StringUtils.isEmpty(hash) && urlRepository.findById(hash).isPresent()){
-           throw new URLAlreadyRegistredException("URL already registered");
-       }
+        if (!StringUtils.isEmpty(hash) && urlRepository.findById(hash).isPresent()) {
+            throw new URLAlreadyRegistredException("URL already registered");
+        }
     }
 }
