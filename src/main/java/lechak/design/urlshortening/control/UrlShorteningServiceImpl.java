@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import lechak.design.urlshortening.boundary.CreateShortURLCommand;
+import lechak.design.urlshortening.control.exception.URLExpiredException;
 import lechak.design.urlshortening.control.exception.URLNotFoundException;
 import lechak.design.urlshortening.control.policies.Policy;
 import lechak.design.urlshortening.entity.Url;
@@ -32,8 +33,14 @@ public class UrlShorteningServiceImpl implements UrlShorteningService {
     @Override
     public Url getOriginalURL(String hash) {
 
-        return urlRepository.findById(hash)
+        var url = urlRepository.findById(hash)
                 .orElseThrow(() -> new URLNotFoundException("URL not found"));
+
+        if (url.getExpirationDate().compareTo(LocalDateTime.now()) < 0) {
+            throw new URLExpiredException("URL Expired");
+        }
+
+        return url;
     }
 
     @Override

@@ -112,6 +112,9 @@ bin/
 *.iws
 /.vagrant/*
 
+# VSCODE
+.vscode
+
 # Mac
 *.DS_Store
 
