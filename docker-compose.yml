@@ -4,12 +4,12 @@ services:
   url-shortening-service:
     build: .
     ports:
-    - 8080:8080
+      - 8080:8080
     depends_on:
       - redis
 
   redis:
-    image: redis
+    image: redis:6.2.6-alpine
     volumes:
       - /var/redis:/data
     ports:
