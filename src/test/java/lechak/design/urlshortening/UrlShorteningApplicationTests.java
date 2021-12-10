@@ -28,7 +28,7 @@ class UrlShorteningApplicationTests {
 
 
     @DynamicPropertySource
-    static void postgresqlProperties(DynamicPropertyRegistry registry) {
+    static void redisProperties(DynamicPropertyRegistry registry) {
         registry.add("redis.server.host", redis::getHost);
         registry.add("redis.server.port", redis::getFirstMappedPort);
     }
@@ -48,7 +48,7 @@ class UrlShorteningApplicationTests {
     }
 
     @Test
-    void redierctToOriginalURLGivenHashShouldWork() {
+    void redirectToOriginalURLGivenARegistredHashShouldWork() {
 
         var testPayload = CreateShortURLCommand.builder().originalURL("https://test11.com").build();
         var response = testRestTemplate.postForEntity("/short-url", testPayload, Url.class);
@@ -65,7 +65,7 @@ class UrlShorteningApplicationTests {
     }
 
     @Test
-    void getUnexistingURLGivenHashShouldReturn406() {
+    void getUnexistingURLGivenANotRegistredHashShouldReturn406() {
 
         var getURLResponse =
                 testRestTemplate.getForEntity("/short-url/{hash}", Url.class, "random");
@@ -88,7 +88,7 @@ class UrlShorteningApplicationTests {
     }
 
     @Test
-    void createANewShortURLWithAnExistingAliaShouldReturn406() {
+    void createANewShortURLWithAnAlreadyRegistredAliaShouldReturn406() {
         var testPayload = CreateShortURLCommand.builder().originalURL("https://test1.com")
                 .customAlia("alia1").build();
 
@@ -99,7 +99,7 @@ class UrlShorteningApplicationTests {
     }
 
     @Test
-    void createANewShortURLForAnExistingURLShouldReturn406() {
+    void createANewShortURLForAnAlreadyRegistredURLShouldReturn406() {
         var testPayload = CreateShortURLCommand.builder().originalURL("https://test2.com").build();
 
         testRestTemplate.postForEntity("/short-url", testPayload, Url.class);
